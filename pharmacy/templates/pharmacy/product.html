@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+    <h1>{{ product.name }}</h1>
+    <p><strong>Price:</strong> ${{ product.price }}</p>
+    <p>{{ product.description|linebreaks }}</p>
+    <p><a href="{% url 'home' %}">Back to products</a></p>
+{% endblock %}

@@ -1,0 +1,7 @@
+<h3>Categories</h3>
+<ul>
+    <li><a href="{% url 'home' %}">All Products</a></li>
+    {% for cat in cats %}
+        <li><a href="{% url 'category' cat.id %}">{{ cat.name }}</a></li>
+    {% endfor %}
+</ul>
