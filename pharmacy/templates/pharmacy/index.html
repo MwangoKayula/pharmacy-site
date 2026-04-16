@@ -9,14 +9,14 @@
     <h2>Our Products</h2>
     <ul>
         {% for product in products %}
-            {% if product.is_published %}
-                <li>
-                    <strong>{{ product.name }}</strong><br>
-                    {{ product.description }}<br>
-                    <a href="{{ product.get_absolute_url }}">View Details</a>
-                    
-                </li>
-            {% endif %}
+            <li>
+                <strong>{{ product.name }}</strong><br>
+                {{ product.description }}<br>
+                <a href="{{ product.get_absolute_url }}">View Details</a>
+                {% if not forloop.last %}<hr>{% endif %}
+            </li>
+        {% empty %}
+            <li>No products available.</li>
         {% endfor %}
     </ul>
 

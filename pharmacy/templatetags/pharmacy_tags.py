@@ -1,8 +1,13 @@
 from django import template
-from pharmacy import views
+from pharmacy.models import Category
 
 register = template.Library()
 
 @register.simple_tag
 def get_categories():
-    return views.categories_db
+    return Category.objects.all()
+
+@register.inclusion_tag('pharmacy/categories_sidebar.html')
+def show_categories():
+    cats = Category.objects.all()
+    return {'cats': cats}
