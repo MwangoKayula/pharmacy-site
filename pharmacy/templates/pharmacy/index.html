@@ -6,19 +6,20 @@
     {% include 'pharmacy/includes/banner.html' %}
 
     <h1>{{ title }}</h1>
-    <h2>Our Products</h2>
-    <ul>
+    <div class="product-list">
         {% for product in products %}
-            <li>
-                <strong>{{ product.name }}</strong><br>
-                {{ product.description }}<br>
-                <a href="{{ product.get_absolute_url }}">View Details</a>
+            <div class="product-card">
+                <div class="article-panel">
+                    <span class="first">Category: {{ product.category.name|default:"Uncategorized" }}</span>
+                    <span class="last">Updated: {{ product.updated_at|date:"d-m-Y H:i" }}</span>
+                </div>
+                <strong>{{ product.name }}</strong>
+                <p>{{ product.description|truncatewords:30 }}</p>
+                <a href="{{ product.get_absolute_url }}" class="view-details">View Details →</a>
                 {% if not forloop.last %}<hr>{% endif %}
-            </li>
+            </div>
         {% empty %}
-            <li>No products available.</li>
+            <p>No products available.</p>
         {% endfor %}
-    </ul>
-
-    {% include 'pharmacy/includes/banner.html' %}
+    </div>
 {% endblock %}

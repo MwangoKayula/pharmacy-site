@@ -1,31 +1,91 @@
 {% load static %}
 {% load pharmacy_tags %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{% block title %}Pharmacy Site{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MediCare Pharmacy{% endblock %}</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'pharmacy/css/style.css' %}">
 </head>
 <body>
-    <div class="header">
-        <img src="{% static 'pharmacy/images/logo.png' %}" alt="Logo" height="60">
-        <h1>Pharmacy</h1>
-    </div>
 
-    <ul>
-        {% for m in menu %}
-            <li><a href="{% url m.url_name %}">{{ m.title }}</a></li>
-        {% endfor %}
-    </ul>
+<!-- Mobile menu toggle button -->
+<div class="mobile-toggle" id="mobileToggle">
+    <i class="fas fa-bars"></i> Menu
+</div>
 
+<div class="app-wrapper">
     <!-- Sidebar -->
-    <div style="float: left; width: 200px; margin-right: 20px;">
-        {% show_categories %}
-    </div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="{% static 'pharmacy/images/logo.png' %}" alt="Logo">
+            <span>MediCare</span>
+        </div>
+
+        <!-- Main navigation (menu from views) -->
+        <nav class="sidebar-nav">
+            {% for m in menu %}
+                <a href="{% url m.url_name %}" class="nav-item">
+                    <i class="fas {% if m.url_name == 'home' %}fa-home{% elif m.url_name == 'about' %}fa-info-circle{% elif m.url_name == 'add_product' %}fa-plus-circle{% elif m.url_name == 'contact' %}fa-envelope{% elif m.url_name == 'login' %}fa-sign-in-alt{% else %}fa-link{% endif %}"></i>
+                    <span>{{ m.title }}</span>
+                </a>
+            {% endfor %}
+        </nav>
+
+        <!-- Categories section -->
+        <div class="sidebar-section">
+            <h3><i class="fas fa-tags"></i> Categories</h3>
+            <ul class="sidebar-list">
+                <li><a href="{% url 'home' %}"><i class="fas fa-list"></i> All Products</a></li>
+                {% for cat in categories %}   <!-- we'll pass categories in context -->
+                    <li>
+                        <a href="{{ cat.get_absolute_url }}">
+                            <i class="fas fa-folder-open"></i> {{ cat.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Tags section -->
+        <div class="sidebar-section">
+            <h3><i class="fas fa-hashtag"></i> Tags</h3>
+            <ul class="sidebar-list">
+                {% for tag in tags %}
+                    <li><a href="{{ tag.get_absolute_url }}"><i class="fas fa-tag"></i> {{ tag.name }}</a></li>
+                {% empty %}
+                    <li>No tags yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </aside>
 
     <!-- Main content -->
-    <div style="margin-left: 220px;">
-        {% block content %}{% endblock %}
-    </div>
+    <main class="main-content">
+        <div class="content-wrap">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+
+<script>
+    // Mobile sidebar toggle
+    const toggleBtn = document.getElementById('mobileToggle');
+    const sidebar = document.getElementById('sidebar');
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+        if (window.innerWidth < 768) {
+            if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        }
+    });
+</script>
 </body>
 </html>

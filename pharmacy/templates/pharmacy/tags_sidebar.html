@@ -1,0 +1,8 @@
+<h3>Tags</h3>
+<ul>
+    {% for tag in tags %}
+        <li><a href="{{ tag.get_absolute_url }}">{{ tag.name }}</a></li>
+    {% empty %}
+        <li>No tags yet.</li>
+    {% endfor %}
+</ul>

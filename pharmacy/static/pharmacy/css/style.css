@@ -1,50 +1,257 @@
+/* Reset & base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f0f8ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f9f4;
+    color: #2c2d3e;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-    background-color: #3f6284;
-    overflow: hidden;
+/* App layout */
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
 }
 
-li {
-    float: left;
+/* ---------- SIDEBAR (desktop) ---------- */
+.sidebar {
+    width: 280px;
+    background: #ffffff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
 }
 
-li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
+.sidebar-brand {
+    padding: 25px 20px 20px 20px;
+    border-bottom: 1px solid #e0f0e4;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.sidebar-brand img {
+    height: 45px;
+}
+.sidebar-brand span {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #211e6f;
+}
+
+/* Navigation items */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0 10px;
+}
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
     text-decoration: none;
+    color: #2c2d5e;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.nav-item i {
+    width: 24px;
+    font-size: 1.2rem;
+}
+.nav-item:hover {
+    background: #eef5ea;
+}
+/* Sidebar sections */
+.sidebar-section {
+    margin: 20px 0 10px;
+    padding: 0 20px;
+}
+.sidebar-section h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6e6c8b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sidebar-list {
+    list-style: none;
+}
+.sidebar-list li {
+    margin: 8px 0;
+}
+.sidebar-list a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    text-decoration: none;
+    color: #3a414e;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.sidebar-list a i {
+    width: 20px;
+    font-size: 0.9rem;
+}
+.sidebar-list a:hover {
+    background: #eef5ea;
+    transform: translateX(5px);
 }
 
-li a:hover {
-    background-color: #1abc9c;
+/* ---------- MAIN CONTENT ---------- */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+    background: #f4f9f4;
+}
+.content-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-h1 {
-    color: #2c3e50;
+/* Mobile toggle button (hidden on desktop) */
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #1e496f;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 40px;
+    cursor: pointer;
+    z-index: 1100;
+    font-weight: 500;
+    gap: 8px;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.product-list li {
-    float: none;
-    background-color: white;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
+/* ---------- PRODUCT CARDS (unchanged but refined) ---------- */
+.product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.product-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: 0.2s;
+}
+.product-card:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.article-panel {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: #231e6f;
+    border-bottom: 1px dashed #e3eee3;
+    padding-bottom: 6px;
+}
+.product-card strong {
+    font-size: 1.25rem;
+    color: #1a265a;
+    display: block;
+    margin: 8px 0;
+}
+.view-details {
+    display: inline-block;
+    margin-top: 12px;
+    background: #eef5ea;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: #231e6f;
+}
+.banner {
+    background: linear-gradient(135deg, #e6f4ea, #d0e6d4);
+    padding: 12px 20px;
+    border-radius: 60px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 500;
 }
 
-.product-list li a {
-    color: #2980b9;
-    padding: 0;
-    display: inline;
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    .mobile-toggle {
+        display: flex;
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 70px 20px 20px 20px;
+    }
+    .sidebar-brand {
+        padding-top: 60px;
+    }
+    /* ===== Improved Header Spacing & Logo ===== */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 30px;          /* more comfortable padding */
+    background: white;
+    border-radius: 24px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
-hr {
-    border: 1px solid #ddd;
+.header img {
+    height: 45px;                /* 25% smaller than before (was ~60px) */
+    width: auto;
+    transition: transform 0.2s;
+}
+
+.header img:hover {
+    transform: scale(1.02);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: -0.3px;
+}
+
+/* Optional: add some breathing space inside the container */
+.container {
+    padding: 20px 25px;
+}
+
+/* Better spacing between sidebar sections */
+.sidebar-section {
+    margin: 25px 0 15px;
+    padding: 0 20px;
+}
+
+/* Main content top spacing */
+.content-wrap {
+    margin-top: 10px;
+}
 }
