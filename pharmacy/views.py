@@ -1,9 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Product, Category
+from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
 from .models import Category, Product
 from .models import Product, Tag
+
+
 
 menu = [
     {'title': 'Home', 'url_name': 'home'},
@@ -60,7 +63,66 @@ def show_category(request, cat_slug):
 
 # Placeholders for other menu items
 def add_product(request):
-    return HttpResponse("<h1>Add New Product</h1><p>Form will go here.</p>")
+    if request.method == 'POST':
+        # Get data from the form
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        description = request.POST.get('description')
+        category_id = request.POST.get('category')
+        is_published = request.POST.get('is_published') == 'on'
+
+        # Basic validation
+        if name and price:
+            # Create slug from name
+            slug = slugify(name)
+            # Ensure unique slug (simple approach)
+            original_slug = slug
+            counter = 1
+            while Product.objects.filter(slug=slug).exists():
+                slug = f"{original_slug}-{counter}"
+                counter += 1
+
+            # Get category (if selected)
+            category = None
+            if category_id:
+                try:
+                    category = Category.objects.get(id=category_id)
+                except Category.DoesNotExist:
+                    pass
+
+            # Create product
+            Product.objects.create(
+                name=name,
+                slug=slug,
+                price=price,
+                description=description,
+                category=category,
+                is_published=is_published
+            )
+            # Show success message and clear form? Or redirect
+            context = {
+                'title': 'Add Product',
+                'menu': menu,
+                'categories': Category.objects.all(),
+                'message': f'Product "{name}" added successfully!'
+            }
+            return render(request, 'pharmacy/add_product.html', context)
+        else:
+            context = {
+                'title': 'Add Product',
+                'menu': menu,
+                'categories': Category.objects.all(),
+                'error': 'Name and price are required.'
+            }
+            return render(request, 'pharmacy/add_product.html', context)
+    else:
+        # GET request – just show empty form
+        context = {
+            'title': 'Add Product',
+            'menu': menu,
+            'categories': Category.objects.all(),
+        }
+        return render(request, 'pharmacy/add_product.html', context)
 
 def contact(request):
     return HttpResponse("<h1>Contact Us</h1><p>Email: pharmacy@example.com</p>")
