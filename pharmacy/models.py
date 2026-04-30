@@ -10,13 +10,13 @@ class PublishedManager(models.Manager):
 
 # Category model
 class Category(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=100, db_index=True, verbose_name="Category Name")
+    slug = models.SlugField(max_length=100, unique=True, db_index=True, verbose_name="URL Slug")
 
     class Meta:
-        ordering = ['name']
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+        ordering = ['name'] 
 
     def get_absolute_url(self):
         return reverse('category', kwargs={'cat_slug': self.slug})
@@ -28,8 +28,13 @@ class Category(models.Model):
         return reverse('category', kwargs={'cat_slug': self.slug})
 
 class Tag(models.Model):
-    name = models.CharField(max_length=100, db_index=True)
-    slug = models.SlugField(max_length=255, unique=True, db_index=True)
+    name = models.CharField(max_length=100, db_index=True, verbose_name="Tag Name")
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL Slug")
+
+    class Meta:
+        verbose_name = 'Tag'
+        verbose_name_plural = 'Tags'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -39,22 +44,24 @@ class Tag(models.Model):
 
 # Product model
 class Product(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
-    description = models.TextField(blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    is_published = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products', null=True, blank=True)
+    name = models.CharField(max_length=100, verbose_name="Product Name")
+    slug = models.SlugField(max_length=100, unique=True, db_index=True, verbose_name="URL Slug")
+    description = models.TextField(blank=True, verbose_name="Description")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Price")
+    is_published = models.BooleanField(default=True, verbose_name="Published")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated")
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, blank=True, verbose_name="Category")
 
     tags = models.ManyToManyField(Tag, blank=True, related_name='products')
-    
+
     # Managers
     objects = models.Manager()
     published = PublishedManager()
 
     class Meta:
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
         ordering = ['-created_at']
 
     def __str__(self):

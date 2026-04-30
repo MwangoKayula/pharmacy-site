@@ -1,5 +1,10 @@
 from django.urls import path
 from pharmacy import views
+from django.contrib import admin
+
+admin.site.site_header = "Pharmacy Admin Panel"
+admin.site.site_title = "Pharmacy Admin"
+admin.site.index_title = "Welcome to Pharmacy Administration"
 
 urlpatterns = [
     path('', views.index, name='home'),
