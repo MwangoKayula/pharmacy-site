@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import Product, Category, Tag
 
 
@@ -23,30 +24,25 @@ class PriceRangeFilter(admin.SimpleListFilter):
             return queryset.filter(price__gt=20)
         return queryset
 
-
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    # ---------- List display customisation (Work 38, 39, 40) ----------
-    list_display = ('name', 'price', 'is_published', 'category', 'created_at', 'desc_length')
+    list_display = ('name', 'price', 'is_published', 'category', 'image_preview', 'created_at')
     list_display_links = ('name',)
     list_editable = ('is_published', 'price')
     ordering = ('-created_at', 'name')
     search_fields = ('name', 'description', 'category__name')
-    list_filter = ('is_published', 'category', 'tags', PriceRangeFilter)
+    list_filter = ('is_published', 'category', 'tags')
     list_per_page = 5
+    prepopulated_fields = {'slug': ('name',)}
+    fields = ('name', 'slug', 'description', 'price', 'is_published', 'category', 'tags', 'image')
+    readonly_fields = ('created_at', 'updated_at')
     actions = ['publish_products', 'unpublish_products']
 
-    # ---------- Form editing (Work 41) ----------
-    # Order of fields in the add/edit form
-    fields = ['name', 'slug', 'description', 'price', 'is_published', 'category', 'tags']
-    # Automatically generate slug from the name field (client-side)
-    prepopulated_fields = {'slug': ('name',)}
-    # Improve many-to-many widget for tags
-    filter_horizontal = ['tags']
-
-    # ---------- Other settings ----------
-    # Prepopulated slug may be overridden if we also want readonly, but prepopulated takes precedence
-    readonly_fields = ('created_at', 'updated_at')   # these are not in 'fields', so they won't appear on edit form anyway
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 50px; max-width: 50px;" />', obj.image.url)
+        return "-"
+    image_preview.short_description = 'Image Preview'
 
     # ---------- Custom methods ----------
     @admin.display(description="Description length (chars)")

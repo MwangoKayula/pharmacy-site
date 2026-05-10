@@ -1,25 +1,69 @@
-/* Custom admin styles for Pharmacy site */
+/* Admin panel custom styling – Navy Blue Pharmacy Theme */
+
+/* Header – navy blue */
 #header {
-    background: #1e6f3f !important;
+    background: #0b2b3f !important;
+    border-bottom: 2px solid #ffb74d;
+    padding: 10px 20px;
 }
 
 #header a:link, #header a:visited {
+    color: #ffffff !important;
+}
+
+#site-name a {
+    font-size: 1.4rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+/* Dashboard modules */
+.module caption, .module h2 {
+    background: #1e4a6f !important;
     color: white;
 }
 
+/* Buttons */
+.button, input[type="submit"], .submit-row input {
+    background: #1e4a6f !important;
+    border-color: #0b2b3f !important;
+}
+
+.button:hover, input[type="submit"]:hover {
+    background: #0b2b3f !important;
+}
+
+/* Breadcrumbs */
 div.breadcrumbs {
-    background: #2c8c4a;
+    background: #2c5a7a !important;
+    color: white;
 }
 
-.module caption, .module h2, .inline-group h2 {
-    background: #1e6f3f !important;
+div.breadcrumbs a {
+    color: #ffd966 !important;
 }
 
-.submit-row input.default {
-    background: #1e6f3f !important;
+/* Footer (custom block) */
+#footer {
+    background: #0b2b3f;
+    color: #cfd8dc;
+    border-top: 2px solid #ffb74d;
 }
 
-/* Optional: change button hover */
-.submit-row input.default:hover {
-    background: #0e4a2a !important;
+#footer h4 {
+    color: #ffb74d;
+}
+
+#footer a {
+    transition: color 0.2s;
+}
+
+#footer a:hover {
+    color: #ffb74d;
+}
+
+/* Logged-in user info (top right) */
+.user-tools {
+    color: #cfd8dc !important;
 }

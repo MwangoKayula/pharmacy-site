@@ -9,14 +9,48 @@
     <div class="product-list">
         {% for product in products %}
             <div class="product-card">
-                <div class="article-panel">
-                    <span class="first">Category: {{ product.category.name|default:"Uncategorized" }}</span>
-                    <span class="last">Updated: {{ product.updated_at|date:"d-m-Y H:i" }}</span>
+                <!-- Example discount badge (only for first product) -->
+                {% if forloop.counter == 1 and product.price %}
+                    <div class="badge">50% Off</div>
+                {% endif %}
+
+                <!-- Product image -->
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="no-image">No image</div>
+                    {% endif %}
                 </div>
-                <strong>{{ product.name }}</strong>
-                <p>{{ product.description|truncatewords:30 }}</p>
-                <a href="{{ product.get_absolute_url }}" class="view-details">View Details →</a>
-                {% if not forloop.last %}<hr>{% endif %}
+
+                <!-- Product title -->
+                <h3>{{ product.name }}</h3>
+
+                <!-- Short description or tags (truncated) -->
+                <p class="product-description">
+                    {% if product.tags.all %}
+                        {{ product.tags.all|join:", " }}
+                    {% else %}
+                        {{ product.description|truncatewords:8 }}
+                    {% endif %}
+                </p>
+
+                <!-- Price section -->
+                <div class="price-section">
+                    {% if forloop.counter == 1 and product.price > 0 %}
+                        <!-- Example: old price = current price + 20 -->
+                        <span class="old-price">${{ product.price|add:"20"|floatformat:2 }}</span>
+                        <span class="current-price">${{ product.price|floatformat:2 }}</span>
+                    {% else %}
+                        <span class="current-price">${{ product.price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Action buttons -->
+                <div class="product-actions">
+                    <a href="{{ product.get_absolute_url }}" class="view-details">View Details</a>
+                    <a href="#" class="add-to-cart">+ Add to Cart</a>
+                </div>
             </div>
         {% empty %}
             <p>No products available.</p>

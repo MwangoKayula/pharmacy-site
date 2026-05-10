@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 from pharmacy import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.index, name='home'),
@@ -15,3 +17,6 @@ urlpatterns = [
 
     path('tag/<slug:tag_slug>/', views.show_tag_products, name='tag'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

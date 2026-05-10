@@ -40,6 +40,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'pharmacy_site.urls'
 
+#TEMPLATES[0]['OPTIONS']['debug'] = True
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -91,7 +93,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
-# Additional directories where Django looks for static files (for custom admin CSS, etc.)
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
@@ -100,6 +101,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Media files (user uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Admin site customisations (optional – can also be set in urls.py)
 # admin.site.site_header = "Pharmacy Admin Panel"   # you can set this in urls.py instead

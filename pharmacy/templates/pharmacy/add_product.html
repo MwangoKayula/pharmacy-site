@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Add Product{% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'pharmacy/css/form.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>{{ title }}</h1>
-
-<form method="post">
-    {% csrf_token %}
-    <div class="form-error">{{ form.non_field_errors }}</div>
-
-    {% for f in form %}
-        <p>
-            <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}:</label>
-            {{ f }}
-        </p>
-        <div class="form-error">{{ f.errors }}</div>
-    {% endfor %}
-
-    <button type="submit">Add Product</button>
-</form>
-
-{% if message %}
-    <p style="color: green;">{{ message }}</p>
-{% endif %}
+<div class="form-container">
+    <h1>{{ title }}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Loop through all form fields (including image) -->
+        {% for field in form %}
+            <p>
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                {{ field }}
+                <div class="form-error">{{ field.errors }}</div>
+            </p>
+        {% endfor %}
+        <button type="submit">Add Product</button>
+    </form>
+</div>
 {% endblock %}

@@ -2,20 +2,56 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.utils.text import slugify
-
+from .forms import UploadFileForm
 from .models import Product, Category, Tag
 from .forms import AddProductForm
+import uuid
+import os
 
+
+def handle_uploaded_file(f):
+    # Get file extension
+    name, ext = os.path.splitext(f.name)
+    # Generate unique name
+    unique_name = f"{name}_{uuid.uuid4().hex}{ext}"
+    # Ensure the upload directory exists
+    upload_dir = os.path.join('media', 'uploads')
+    os.makedirs(upload_dir, exist_ok=True)
+    # Save file
+    file_path = os.path.join(upload_dir, unique_name)
+    with open(file_path, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+    return unique_name  # return the saved filename
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = request.FILES['file']
+            filename = handle_uploaded_file(uploaded_file)
+            return render(request, 'pharmacy/upload_success.html', {
+                'filename': filename,
+                'menu': menu,
+                'title': 'Upload Success'
+            })
+    else:
+        form = UploadFileForm()
+    context = {
+        'title': 'Upload Prescription',
+        'menu': menu,
+        'form': form,
+    }
+    return render(request, 'pharmacy/upload.html', context)
 
 # Menu definition (used in all views)
 menu = [
     {'title': 'Home', 'url_name': 'home'},
     {'title': 'About', 'url_name': 'about'},
-    {'title': 'Add Product', 'url_name': 'add_product'},
+    {'title': 'Add Product', 'url_name': 'add_product'},   # this is the link to /add/
     {'title': 'Contact', 'url_name': 'contact'},
     {'title': 'Login', 'url_name': 'login'},
 ]
-
 
 # ---------- Main views ----------
 def index(request):
@@ -70,45 +106,15 @@ def show_tag_products(request, tag_slug):
 # ---------- Form handling ----------
 def add_product(request):
     if request.method == 'POST':
-        form = AddProductForm(request.POST)
+        form = AddProductForm(request.POST, request.FILES)   # handles both text and file
         if form.is_valid():
-            cleaned_data = form.cleaned_data
-
-            # Generate slug if not provided
-            slug = cleaned_data.get('slug')
-            if not slug:
-                slug = slugify(cleaned_data['name'])
-
-            # Ensure unique slug
-            original_slug = slug
-            counter = 1
-            while Product.objects.filter(slug=slug).exists():
-                slug = f"{original_slug}-{counter}"
-                counter += 1
-
-            # Create product (without many-to-many tags first)
-            try:
-                product = Product.objects.create(
-                    name=cleaned_data['name'],
-                    slug=slug,
-                    description=cleaned_data['description'],
-                    price=cleaned_data['price'],
-                    is_published=cleaned_data['is_published'],
-                    category=cleaned_data['category']
-                )
-                # Add tags (many-to-many)
-                product.tags.set(cleaned_data['tags'])
-                # Redirect to home on success
-                return redirect('home')
-            except Exception as e:
-                form.add_error(None, f"Database error: {str(e)}")
-        # If form is invalid or save fails, fall through to re-render with errors
+            form.save()
+            return redirect('home')
     else:
         form = AddProductForm()
-
     context = {
         'title': 'Add Product',
-        'menu': menu,
+        'menu': menu,   # make sure 'menu' is defined in this view
         'form': form,
     }
     return render(request, 'pharmacy/add_product.html', context)

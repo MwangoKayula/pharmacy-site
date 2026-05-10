@@ -1,38 +1,14 @@
+import re
 from django import forms
-from .models import Category, Tag
+from django.core.exceptions import ValidationError
+from .models import Product, Category, Tag
 
-class AddProductForm(forms.Form):
-    name = forms.CharField(
-        max_length=100,
-        label="Product name",
-        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g., Paracetamol 500mg'})
-    )
-    slug = forms.SlugField(
-        max_length=100,
-        label="URL slug",
-        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'auto-generated from name'})
-    )
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={'cols': 50, 'rows': 5, 'class': 'form-textarea'}),
-        required=False,
-        label="Description"
-    )
-    price = forms.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        label="Price ($)",
-        widget=forms.NumberInput(attrs={'class': 'form-input', 'step': '0.01'})
-    )
-    is_published = forms.BooleanField(
-        required=False,
-        label="Published",
-        initial=True,
-        widget=forms.CheckboxInput(attrs={'class': 'form-checkbox'})
-    )
+class AddProductForm(forms.ModelForm):
+    # Override category and tags to customise appearance
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
-        label="Category",
         empty_label="-- Select category --",
+        label="Category",
         widget=forms.Select(attrs={'class': 'form-select'})
     )
     tags = forms.ModelMultipleChoiceField(
@@ -41,3 +17,34 @@ class AddProductForm(forms.Form):
         label="Tags",
         widget=forms.SelectMultiple(attrs={'class': 'form-select'})
     )
+
+    class Meta:
+        model = Product
+        # Include ALL fields you want to show, including image
+        fields = ['name', 'slug', 'description', 'price', 'is_published', 'category', 'tags', 'image']
+        labels = {
+            'name': 'Product name',
+            'slug': 'URL slug',
+            'description': 'Description',
+            'price': 'Price ($)',
+            'is_published': 'Published',
+            'image': 'Product image',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g., Paracetamol 500mg'}),
+            'slug': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'auto-generated from name'}),
+            'description': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 4}),
+            'price': forms.NumberInput(attrs={'class': 'form-input', 'step': '0.01', 'placeholder': '0.00'}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-input'}),
+        }
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if len(name) > 100:
+            raise ValidationError('Product name cannot exceed 100 characters.')
+        return name
+
+# Optional: separate form for generic file upload (if needed for Work 48)
+class UploadFileForm(forms.Form):
+    file = forms.FileField(label="Select a file")

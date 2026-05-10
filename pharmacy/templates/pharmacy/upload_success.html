@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Success{% endblock %}
+
+{% block content %}
+<h1>File uploaded successfully</h1>
+<p>Saved as: {{ filename }}</p>
+<p><a href="{% url 'home' %}">Back to home</a></p>
+{% endblock %}
