@@ -24,8 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',      # for shell_plus
-    'pharmacy',               # our pharmacy app
+    'django_extensions',
+    'pharmacy',
+    'users.apps.UsersConfig',   # new
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.context_processors.pharmacy_context', 
                 'pharmacy.context_processors.pharmacy_context',   # injects categories & tags into every template
             ],
         },

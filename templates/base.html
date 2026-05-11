@@ -28,16 +28,15 @@
             <span>MediCare</span>
         </div>
 
-        <!-- Main navigation (menu from views) -->
+        <!-- Main navigation (menu from context processor) -->
         <nav class="sidebar-nav">
-            {% for m in menu %}
+            {% for m in mainmenu %}
                 <a href="{% url m.url_name %}" class="nav-item">
                     <i class="fas 
                         {% if m.url_name == 'home' %}fa-home
                         {% elif m.url_name == 'about' %}fa-info-circle
                         {% elif m.url_name == 'add_product' %}fa-plus-circle
                         {% elif m.url_name == 'contact' %}fa-envelope
-                        {% elif m.url_name == 'login' %}fa-sign-in-alt
                         {% else %}fa-link{% endif %}"></i>
                     <span>{{ m.title }}</span>
                 </a>
@@ -75,6 +74,22 @@
     <!-- Main content -->
     <main class="main-content">
         <div class="content-wrap">
+            <!-- Header / top bar (optional, can be moved to sidebar) -->
+            <div class="header">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <img src="{% static 'pharmacy/images/logo.png' %}" alt="Pharmacy Logo" height="45">
+                    <h1>MediCare Pharmacy</h1>
+                </div>
+                <!-- User status line (visible on desktop, can be moved) -->
+                <div class="user-status">
+                    {% if user.is_authenticated %}
+                        Welcome, {{ user.username }} | <a href="{% url 'users:logout' %}">Logout</a>
+                    {% else %}
+                        <a href="{% url 'users:login' %}">Login</a> | <a href="#">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+
             {% block content %}
             {% endblock %}
         </div>

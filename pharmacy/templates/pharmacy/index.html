@@ -9,11 +9,6 @@
     <div class="product-list">
         {% for product in products %}
             <div class="product-card">
-                <!-- Example discount badge (only for first product) -->
-                {% if forloop.counter == 1 and product.price %}
-                    <div class="badge">50% Off</div>
-                {% endif %}
-
                 <!-- Product image -->
                 <div class="product-image">
                     {% if product.image %}
@@ -21,6 +16,12 @@
                     {% else %}
                         <div class="no-image">No image</div>
                     {% endif %}
+                </div>
+
+                <!-- Category and update date -->
+                <div class="article-panel">
+                    <span class="first">Category: {{ product.category.name|default:"Uncategorized" }}</span>
+                    <span class="last">Updated: {{ product.updated_at|date:"d-m-Y H:i" }}</span>
                 </div>
 
                 <!-- Product title -->
@@ -35,15 +36,9 @@
                     {% endif %}
                 </p>
 
-                <!-- Price section -->
+                <!-- Single price -->
                 <div class="price-section">
-                    {% if forloop.counter == 1 and product.price > 0 %}
-                        <!-- Example: old price = current price + 20 -->
-                        <span class="old-price">${{ product.price|add:"20"|floatformat:2 }}</span>
-                        <span class="current-price">${{ product.price|floatformat:2 }}</span>
-                    {% else %}
-                        <span class="current-price">${{ product.price|floatformat:2 }}</span>
-                    {% endif %}
+                    <span class="current-price">${{ product.price|floatformat:2 }}</span>
                 </div>
 
                 <!-- Action buttons -->

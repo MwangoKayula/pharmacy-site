@@ -10,12 +10,15 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('product/<slug:product_slug>/', views.show_product, name='product'),
     path('category/<slug:cat_slug>/', views.show_category, name='category'),
-
     path('admin/', admin.site.urls),
+    path('', include('pharmacy.urls')),          # your pharmacy app
+    path('users/', include('users.urls', namespace='users')),   # new
     path('pharmacy/', include('pharmacy.urls')),          # all pharmacy URLs under /pharmacy/
     path('', RedirectView.as_view(url='/pharmacy/', permanent=False)),  # redirect root to /pharmacy/
-
     path('tag/<slug:tag_slug>/', views.show_tag_products, name='tag'),
+    path('users/', include('users.urls', namespace='users')),
+    
+
 ]
 
 if settings.DEBUG:

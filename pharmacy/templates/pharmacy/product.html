@@ -6,11 +6,11 @@
     <div style="max-width: 800px; margin: 0 auto;">
         <h1>{{ product.name }}</h1>
 
-        {% if product.image %}
-            <div style="text-align: center; margin: 20px 0;">
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; max-height: 400px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
-            </div>
-        {% endif %}
+      {% if product.image %}
+    <div style="text-align: center; margin: 20px 0;">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; max-height: 400px; border-radius: 20px;">
+    </div>
+{% endif %}
 
         <p><strong>Price:</strong> ${{ product.price }}</p>
         <p><strong>Category:</strong> 
