@@ -74,20 +74,22 @@
     <!-- Main content -->
     <main class="main-content">
         <div class="content-wrap">
-            <!-- Header / top bar (optional, can be moved to sidebar) -->
+            <!-- Header / top bar -->
             <div class="header">
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <img src="{% static 'pharmacy/images/logo.png' %}" alt="Pharmacy Logo" height="45">
                     <h1>MediCare Pharmacy</h1>
                 </div>
-                <!-- User status line (visible on desktop, can be moved) -->
+                <!-- User status line (visible on desktop) -->
                 <div class="user-status">
-                    {% if user.is_authenticated %}
-                        Welcome, {{ user.username }} | <a href="{% url 'users:logout' %}">Logout</a>
-                    {% else %}
-                        <a href="{% url 'users:login' %}">Login</a> | <a href="#">Register</a>
-                    {% endif %}
-                </div>
+    {% if user.is_authenticated %}
+        Welcome, <a href="{% url 'users:profile' %}">{{ user.username }}</a> |
+        <a href="{% url 'users:logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'users:login' %}">Login</a> |
+        <a href="{% url 'users:register' %}">Register</a>
+    {% endif %}
+</div>
             </div>
 
             {% block content %}

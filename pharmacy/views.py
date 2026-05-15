@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from .models import Product, Category, Tag
 from .forms import AddProductForm
+from django.contrib.auth.decorators import login_required
 
 # ===== Helper functions (if any) =====
 
@@ -48,12 +49,15 @@ def show_tag_products(request, tag_slug):
     }
     return render(request, 'pharmacy/index.html', context)
 
+@login_required
 def add_product(request):
     if request.method == 'POST':
         form = AddProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('home')
+            product = form.save(commit=False)
+            product.author = request.user
+            product.save()
+        return redirect('home')
     else:
         form = AddProductForm()
     context = {

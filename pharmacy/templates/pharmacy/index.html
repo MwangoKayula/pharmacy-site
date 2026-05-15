@@ -20,8 +20,11 @@
 
                 <!-- Category and update date -->
                 <div class="article-panel">
-                    <span class="first">Category: {{ product.category.name|default:"Uncategorized" }}</span>
-                    <span class="last">Updated: {{ product.updated_at|date:"d-m-Y H:i" }}</span>
+                     <span class="first">
+                     Category: {{ product.category.name|default:"Uncategorized" }}
+                     {% if product.author %} | Author: {{ product.author.username }}{% endif %}
+                     </span>
+                     <span class="last">Updated: {{ product.updated_at|date:"d-m-Y H:i" }}</span>
                 </div>
 
                 <!-- Product title -->

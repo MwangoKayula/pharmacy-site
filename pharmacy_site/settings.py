@@ -110,3 +110,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Admin site customisations (optional – can also be set in urls.py)
 # admin.site.site_header = "Pharmacy Admin Panel"   # you can set this in urls.py instead
+# Authentication redirects
+LOGIN_REDIRECT_URL = 'home'        # after successful login
+LOGOUT_REDIRECT_URL = 'users:login'  # after logout, go to login page
+LOGIN_URL = 'users:login'          # where to redirect unauthenticated users
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',   # default username/password
+    'users.authentication.EmailAuthBackend',       # new email-based backend
+]

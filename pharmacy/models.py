@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
+from django.conf import settings 
 
 # Custom manager for published products
 class PublishedManager(models.Manager):
@@ -51,6 +52,15 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, blank=True, verbose_name="Category")
     tags = models.ManyToManyField(Tag, blank=True, related_name='products')
     image = models.ImageField(upload_to='products/%Y/%m/%d/', blank=True, null=True, verbose_name="Product image")
+
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='products',
+        verbose_name="Author"
+    )
 
     # Managers
     objects = models.Manager()

@@ -2,6 +2,34 @@ import re
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Product, Category, Tag
+from django.contrib.auth import get_user_model
+
+
+class RegisterUserForm(forms.ModelForm):
+    username = forms.CharField(label='Username')
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'first_name', 'last_name', 'password', 'password2']
+        labels = {
+            'email': 'E-mail',
+            'first_name': 'First name',
+            'last_name': 'Last name',
+        }
+
+    def clean_password2(self):
+        cd = self.cleaned_data
+        if cd['password'] != cd['password2']:
+            raise ValidationError("Passwords do not match.")
+        return cd['password2']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and get_user_model().objects.filter(email=email).exists():
+            raise ValidationError("This email already exists.")
+        return email
 
 class AddProductForm(forms.ModelForm):
     # Override category and tags to customise appearance
@@ -20,7 +48,6 @@ class AddProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        # Include ALL fields you want to show, including image
         fields = ['name', 'slug', 'description', 'price', 'is_published', 'category', 'tags', 'image']
         labels = {
             'name': 'Product name',

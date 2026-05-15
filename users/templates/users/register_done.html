@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 480px;
+        margin: 2rem auto;
+        padding: 2rem 1.5rem;
+        background: white;
+        border-radius: 32px;
+        box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .auth-container h1 {
+        color: #1e3a5f;
+        margin-bottom: 1rem;
+    }
+    .auth-container a {
+        color: #1e3a5f;
+        font-weight: 500;
+    }
+</style>
+<div class="auth-container">
+    <h1>🎉 Welcome!</h1>
+    <p>Your account has been successfully created.</p>
+    <p>Please <a href="{% url 'users:login' %}">log in</a> to continue.</p>
+</div>
+{% endblock %}
