@@ -119,3 +119,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',   # default username/password
     'users.authentication.EmailAuthBackend',       # new email-based backend
 ]
+
+# Email backend for development (prints emails to console)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
