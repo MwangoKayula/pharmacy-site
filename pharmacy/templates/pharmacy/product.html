@@ -26,4 +26,8 @@
         <p>{{ product.description|linebreaks }}</p>
         <p><a href="{% url 'home' %}">← Back to products</a></p>
     </div>
+
+    {% if perms.pharmacy.change_product %}
+    <p><a href="{% url 'edit_product' product.slug %}">Edit this product</a></p>
+{% endif %}
 {% endblock %}

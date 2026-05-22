@@ -5,7 +5,10 @@ from django.utils.text import slugify
 from .models import Product, Category, Tag
 from .forms import AddProductForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
+
+    # ... existing code
 # ===== Helper functions (if any) =====
 
 # ===== Main views =====
@@ -50,6 +53,7 @@ def show_tag_products(request, tag_slug):
     return render(request, 'pharmacy/index.html', context)
 
 @login_required
+@permission_required('pharmacy.add_product', raise_exception=True)
 def add_product(request):
     if request.method == 'POST':
         form = AddProductForm(request.POST, request.FILES)
@@ -65,6 +69,12 @@ def add_product(request):
         'form': form,
     }
     return render(request, 'pharmacy/add_product.html', context)
+
+@permission_required('pharmacy.change_product', raise_exception=True)
+def edit_product(request, product_slug):
+    product = get_object_or_404(Product, slug=product_slug)
+    # Placeholder – return simple response
+    return HttpResponse(f"<h1>Edit Product</h1><p>Editing: {product.name}</p>")
 
 # ===== Placeholders for other menu items =====
 def contact(request):

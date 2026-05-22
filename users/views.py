@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import LoginUserForm, RegisterUserForm, ProfileUserForm
 from django.contrib.auth.views import PasswordChangeView
 from .forms import UserPasswordChangeForm
+from django.conf import settings
 
 class UserPasswordChange(PasswordChangeView):
     form_class = UserPasswordChangeForm
@@ -32,7 +33,7 @@ class RegisterUser(CreateView):
 class ProfileUser(LoginRequiredMixin, UpdateView):
     form_class = ProfileUserForm
     template_name = 'users/profile.html'
-    extra_context = {'title': 'User Profile'}
+    extra_context = {'title': 'User Profile', 'default_image': settings.MEDIA_URL + 'users/default.png'}
 
     def get_object(self, queryset=None):
         # Return the currently logged‑in user
