@@ -8,8 +8,9 @@ from django.core.cache import cache
 from django.conf import settings
 from .models import Product, Category, Tag
 from .forms import AddProductForm
-from .services.cohere_service import CohereService
+#from .services.cohere_service import CohereService
 import json
+from .services.mock_ai_service import MockAIService
 
 # ===== Menu (fallback) =====
 menu = [
@@ -136,18 +137,23 @@ def map_view(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def cohere_chat(request):
     try:
         data = json.loads(request.body)
         question = data.get('question', '')
         if not question.strip():
             return JsonResponse({'answer': 'Please enter a question.'})
-        ai = CohereService()
+        # Use mock AI instead of real API
+        ai = MockAIService()
         answer = ai.ask_question(question)
         return JsonResponse({'answer': answer})
     except Exception as e:
-        print(f"Cohere chat error: {e}")
-        return JsonResponse({'answer': 'AI service error. Try again later.'}, status=500)
+        print(f"Chat error: {e}")
+        return JsonResponse({'answer': 'Sorry, something went wrong. Please try again.'}, status=500)
 
 # Legacy views (keep as needed)
 def categories(request, cat_id):
