@@ -6,29 +6,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MediCare Pharmacy{% endblock %}</title>
-    <!-- Font Awesome 6 (free icons) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Main styles -->
     <link rel="stylesheet" type="text/css" href="{% static 'pharmacy/css/style.css' %}">
-    <!-- Extra CSS block (for form styling etc.) -->
+    <!-- Extra CSS block -->
     {% block extra_css %}{% endblock %}
+    
+    <!-- Dark mode CSS overrides (added to existing styles) -->
+    <style>
+        /* Dark mode variables and overrides */
+        body.dark {
+            --bg-body: #121826;
+            --text-main: #e0e0e0;
+            --text-light: #9ca3af;
+            --card-bg: #1e2a3a;
+            --sidebar-bg: #1a1f2e;
+            --header-bg: #0f172a;
+            --border-color: #2d3a4a;
+            --btn-bg: #2d3a4a;
+            --btn-text: #cbd5e1;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --input-border: #4b5563;
+            --input-focus: #3b82f6;
+        }
+
+        /* Apply variables to main containers */
+        body.dark,
+        body.dark .main-content,
+        body.dark .sidebar,
+        body.dark .sidebar-brand,
+        body.dark .header,
+        body.dark .product-card,
+        body.dark .auth-container,
+        body.dark .chat-widget {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+        }
+        body.dark .sidebar {
+            background-color: var(--sidebar-bg);
+        }
+        body.dark .header {
+            background-color: var(--header-bg);
+        }
+        body.dark .sidebar-section h3,
+        body.dark .product-card h3,
+        body.dark .current-price,
+        body.dark .article-panel {
+            color: var(--btn-text);
+        }
+        body.dark .sidebar-list a,
+        body.dark .nav-item {
+            color: var(--btn-text);
+        }
+        body.dark .sidebar-list a:hover,
+        body.dark .nav-item:hover {
+            background-color: var(--btn-bg);
+        }
+        body.dark .product-description,
+        body.dark .user-status {
+            color: var(--text-light);
+        }
+        body.dark .view-details {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+        }
+        body.dark .add-to-cart {
+            background-color: var(--btn-text);
+            color: white;
+        }
+        body.dark .form-error {
+            background-color: #fff4ed;
+            color: #c2410c;
+        }
+        body.dark .auth-container input,
+        body.dark .auth-container select,
+        body.dark .auth-container textarea,
+        body.dark .chat-input-area input {
+            background-color: var(--card-bg);
+            border-color: var(--input-border);
+            color: var(--text-main);
+        }
+        body.dark .chat-messages .ai-message span {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+        }
+        body.dark .chat-messages .user-message span {
+            background-color: var(--btn-text);
+            color: white;
+        }
+        body.dark .chat-header {
+            background-color: #0f172a;
+        }
+        body.dark .sidebar-brand span,
+        body.dark .header h1 {
+            color: var(--btn-text);
+        }
+        body.dark .sidebar-brand {
+            border-bottom-color: var(--border-color);
+        }
+        body.dark .article-panel {
+            border-bottom-color: var(--border-color);
+        }
+    </style>
 </head>
 <body>
 
-<!-- Mobile menu toggle button -->
+{% if not hide_sidebar %}
 <div class="mobile-toggle" id="mobileToggle">
     <i class="fas fa-bars"></i> Menu
 </div>
+{% endif %}
 
 <div class="app-wrapper">
-    <!-- Sidebar -->
+    {% if not hide_sidebar %}
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <img src="{% static 'pharmacy/images/logo.png' %}" alt="Logo">
             <span>MediCare</span>
         </div>
-
-        <!-- Main navigation (menu from context processor) -->
         <nav class="sidebar-nav">
             {% for m in mainmenu %}
                 <a href="{% url m.url_name %}" class="nav-item">
@@ -37,28 +133,22 @@
                         {% elif m.url_name == 'about' %}fa-info-circle
                         {% elif m.url_name == 'add_product' %}fa-plus-circle
                         {% elif m.url_name == 'contact' %}fa-envelope
+                        {% elif m.url_name == 'map' %}fa-map-marker-alt
+                        {% elif m.url_name == 'cohere_chat' %}fa-robot
                         {% else %}fa-link{% endif %}"></i>
                     <span>{{ m.title }}</span>
                 </a>
             {% endfor %}
         </nav>
-
-        <!-- Categories section -->
         <div class="sidebar-section">
             <h3><i class="fas fa-tags"></i> Categories</h3>
             <ul class="sidebar-list">
                 <li><a href="{% url 'home' %}"><i class="fas fa-list"></i> All Products</a></li>
                 {% for cat in categories %}
-                    <li>
-                        <a href="{{ cat.get_absolute_url }}">
-                            <i class="fas fa-folder-open"></i> {{ cat.name }}
-                        </a>
-                    </li>
+                    <li><a href="{{ cat.get_absolute_url }}"><i class="fas fa-folder-open"></i> {{ cat.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
-
-        <!-- Tags section -->
         <div class="sidebar-section">
             <h3><i class="fas fa-hashtag"></i> Tags</h3>
             <ul class="sidebar-list">
@@ -70,35 +160,240 @@
             </ul>
         </div>
     </aside>
+    {% endif %}
 
-    <!-- Main content -->
-    <main class="main-content">
+    <main class="main-content" {% if hide_sidebar %}style="margin-left: 0;"{% endif %}>
         <div class="content-wrap">
-            <!-- Header / top bar -->
             <div class="header">
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <img src="{% static 'pharmacy/images/logo.png' %}" alt="Pharmacy Logo" height="45">
                     <h1>MediCare Pharmacy</h1>
                 </div>
-                <!-- User status line (visible on desktop) -->
                 <div class="user-status">
-    {% if user.is_authenticated %}
-        Welcome, <a href="{% url 'users:profile' %}">{{ user.username }}</a> |
-        <a href="{% url 'users:logout' %}">Logout</a>
-    {% else %}
-        <a href="{% url 'users:login' %}">Login</a> |
-        <a href="{% url 'users:register' %}">Register</a>
-    {% endif %}
-</div>
+                    <button id="darkModeToggle" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    {% if user.is_authenticated %}
+                        Welcome, <a href="{% url 'users:profile' %}">{{ user.username }}</a> |
+                        <a href="{% url 'users:logout' %}">Logout</a>
+                    {% else %}
+                        <a href="{% url 'users:login' %}">Login</a> |
+                        <a href="{% url 'users:register' %}">Register</a>
+                    {% endif %}
+                </div>
             </div>
-
-            {% block content %}
-            {% endblock %}
+            {% block content %}{% endblock %}
         </div>
     </main>
 </div>
 
+<!-- ========== FLOATING AI CHAT WIDGET (Cohere) ========== -->
+<style>
+    .chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 320px;
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(30, 58, 95, 0.1);
+    }
+    .chat-header {
+        background: #1e3a5f;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 24px 24px 0 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 600;
+    }
+    .chat-header i {
+        font-size: 1.2rem;
+        transition: transform 0.2s;
+    }
+    .chat-body {
+        display: none;
+        flex-direction: column;
+        padding: 15px;
+        background: #fefefe;
+        border-radius: 0 0 24px 24px;
+        max-height: 400px;
+    }
+    .chat-body.open {
+        display: flex;
+    }
+    .chat-messages {
+        max-height: 280px;
+        overflow-y: auto;
+        margin-bottom: 12px;
+        padding-right: 8px;
+    }
+    .user-message {
+        text-align: right;
+        margin: 8px 0;
+    }
+    .user-message span {
+        background: #1e3a5f;
+        color: white;
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 20px;
+        max-width: 85%;
+        word-wrap: break-word;
+    }
+    .ai-message {
+        margin: 8px 0;
+    }
+    .ai-message span {
+        background: #eef5ea;
+        color: #1e3a5f;
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 20px;
+        max-width: 85%;
+        word-wrap: break-word;
+    }
+    .chat-input-area {
+        display: flex;
+        gap: 8px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 12px;
+    }
+    .chat-input-area input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 30px;
+        font-size: 0.85rem;
+    }
+    .chat-input-area button {
+        background: #1e3a5f;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    @media (max-width: 640px) {
+        .chat-widget {
+            width: 280px;
+            right: 10px;
+            bottom: 10px;
+        }
+    }
+</style>
+
+<div class="chat-widget" id="chatWidget">
+    <div class="chat-header" id="chatHeader">
+        <span><i class="fas fa-robot"></i> MediCare AI</span>
+        <i class="fas fa-chevron-down" id="chatToggleIcon"></i>
+    </div>
+    <div class="chat-body" id="chatBody">
+        <div class="chat-messages" id="chatMessages">
+            <div class="ai-message"><span>Hello! I'm your pharmacy assistant. Ask me about medications, health tips, or our products.</span></div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Type your question...">
+            <button id="chatSendBtn">Send</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    const chatHeader = document.getElementById('chatHeader');
+    const chatBody = document.getElementById('chatBody');
+    const toggleIcon = document.getElementById('chatToggleIcon');
+    chatHeader.addEventListener('click', () => {
+        chatBody.classList.toggle('open');
+        toggleIcon.classList.toggle('fa-chevron-down');
+        toggleIcon.classList.toggle('fa-chevron-up');
+    });
+
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('chatSendBtn');
+    const chatMessages = document.getElementById('chatMessages');
+
+    async function sendMessage() {
+        const question = chatInput.value.trim();
+        if (!question) return;
+
+        // Add user message
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-message';
+        userDiv.innerHTML = `<span>${escapeHtml(question)}</span>`;
+        chatMessages.appendChild(userDiv);
+        chatInput.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Show loading
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'ai-message';
+        loadingDiv.innerHTML = '<span><i class="fas fa-spinner fa-pulse"></i> Thinking...</span>';
+        chatMessages.appendChild(loadingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+            const response = await fetch('{% url "cohere_chat" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ question: question }),
+            });
+            const data = await response.json();
+            loadingDiv.remove();
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'ai-message';
+            aiDiv.innerHTML = `<span>${escapeHtml(data.answer)}</span>`;
+            chatMessages.appendChild(aiDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        } catch (err) {
+            loadingDiv.innerHTML = '<span>Sorry, something went wrong. Please try again.</span>';
+            setTimeout(() => loadingDiv.remove(), 2000);
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+</script>
+
+<script>
+    // Dark mode toggle with local storage
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    }
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        let theme = 'light';
+        if (document.body.classList.contains('dark')) {
+            theme = 'dark';
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+        localStorage.setItem('theme', theme);
+    });
+
     // Mobile sidebar toggle
     const toggleBtn = document.getElementById('mobileToggle');
     const sidebar = document.getElementById('sidebar');
@@ -106,7 +401,6 @@
         toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('open');
         });
-        // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
             if (window.innerWidth < 768) {
                 if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {

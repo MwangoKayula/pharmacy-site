@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Pharmacy Location{% endblock %}
+
+{% block extra_css %}
+<style>
+    #map {
+        height: 500px;
+        width: 100%;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .map-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 20px;
+    }
+    h2 {
+        text-align: center;
+        color: #1e3a5f;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-container">
+    <h2>📍 Our Pharmacy Location</h2>
+    <div id="map"></div>
+</div>
+
+<script>
+    // Initialize the map
+    function initMap() {
+        // Replace these coordinates with your pharmacy's actual latitude and longitude
+        const pharmacyLocation = { lat: 55.794182340233185, lng: 49.14070131739104 };
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: pharmacyLocation,
+        });
+        // Add a marker for the pharmacy
+        const marker = new google.maps.Marker({
+            position: pharmacyLocation,
+            map: map,
+            title: "MediCare Pharmacy",
+            animation: google.maps.Animation.DROP,
+        });
+        // Optional: Add an info window
+        const infoWindow = new google.maps.InfoWindow({
+            content: '<strong>MediCare Pharmacy</strong><br>Ulitsa Karla Marksa,  420015,<br>Kazan, Respublika Tatarstan, HC 72',
+        });
+        marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+        });
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap">
+</script>
+{% endblock %}

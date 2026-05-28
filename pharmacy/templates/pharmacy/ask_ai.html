@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Pharmacy AI Assistant{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ai-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+        color: #1e3a5f;
+        margin-bottom: 30px;
+    }
+    .question-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        font-family: inherit;
+        resize: vertical;
+        margin-bottom: 15px;
+    }
+    button {
+        background: linear-gradient(95deg, #1e3a5f, #2a577b);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 40px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    button:hover {
+        background: linear-gradient(95deg, #14324f, #1e4668);
+        transform: translateY(-2px);
+    }
+    .answer-box {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 16px;
+        border-left: 4px solid #1e3a5f;
+    }
+    .answer-box h3 {
+        color: #1e3a5f;
+        margin-bottom: 10px;
+    }
+    .answer-box p {
+        line-height: 1.6;
+        color: #1e293b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ai-container">
+    <h1>💊 Pharmacy AI Assistant</h1>
+    <form method="post" class="question-form">
+        {% csrf_token %}
+        <textarea name="question" rows="4" placeholder="Ask me about medications, dosages, side effects, or general health questions...">{% if question %}{{ question }}{% endif %}</textarea>
+        <button type="submit">Ask Assistant</button>
+    </form>
+
+    {% if answer %}
+    <div class="answer-box">
+        <h3>🤖 AI Assistant:</h3>
+        <p>{{ answer|linebreaksbr }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

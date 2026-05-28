@@ -2,6 +2,10 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.conf import settings 
+from django_resized import ResizedImageField
+
+
+image = ResizedImageField(upload_to='...', size=[400, 400], crop=['middle', 'center'])
 
 # Custom manager for published products
 class PublishedManager(models.Manager):

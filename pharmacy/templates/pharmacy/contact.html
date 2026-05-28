@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <h1>Contact Us</h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 30px;">
+        <div style="flex: 1; min-width: 250px;">
+            <h3>Pharmacy Address</h3>
+            <p>123 Health Street<br>Wellness City, HC 98765</p>
+            <p>📞 +1 (800) 123-4567<br>✉️ care@medicarepharmacy.com</p>
+        </div>
+        <div style="flex: 2;">
+            {% include 'pharmacy/includes/map_partial.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}
