@@ -1,17 +1,151 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Contact Us{% endblock %}
+{% block title %}Contact Us - MediCare Pharmacy{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-wrapper {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 20px;
+    }
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+    .contact-info {
+        background: var(--card-bg);
+        border-radius: 28px;
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        height: 100%;
+    }
+    .contact-info h2 {
+        font-size: 1.6rem;
+        color: var(--btn-text);
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--btn-text);
+        padding-left: 15px;
+    }
+    .contact-details {
+        margin: 1.5rem 0;
+    }
+    .contact-details p {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 1.2rem 0;
+        font-size: 1rem;
+        color: var(--text-main);
+    }
+    .contact-details i {
+        width: 28px;
+        font-size: 1.2rem;
+        color: var(--btn-text);
+    }
+    .contact-hours {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+    }
+    .contact-hours h3 {
+        font-size: 1.2rem;
+        color: var(--btn-text);
+        margin-bottom: 0.8rem;
+    }
+    .contact-hours ul {
+        list-style: none;
+        padding: 0;
+    }
+    .contact-hours li {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px dashed var(--border-color);
+        color: var(--text-light);
+    }
+    .map-container {
+        background: var(--card-bg);
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        height: 100%;
+        min-height: 380px;
+    }
+    .map-container h3 {
+        background: var(--btn-text);
+        color: white;
+        padding: 1rem;
+        margin: 0;
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    #map {
+        width: 100%;
+        height: 350px;
+    }
+    @media (max-width: 768px) {
+        .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        .map-container {
+            min-height: 300px;
+        }
+        #map {
+            height: 280px;
+        }
+    }
+    .social-links {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 20px;
+    }
+    .social-links a {
+        color: var(--btn-text);
+        font-size: 1.5rem;
+        transition: transform 0.2s;
+    }
+    .social-links a:hover {
+        transform: translateY(-3px);
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto;">
-    <h1>Contact Us</h1>
-    <div style="display: flex; flex-wrap: wrap; gap: 30px;">
-        <div style="flex: 1; min-width: 250px;">
-            <h3>Pharmacy Address</h3>
-            <p>123 Health Street<br>Wellness City, HC 98765</p>
-            <p>📞 +1 (800) 123-4567<br>✉️ care@medicarepharmacy.com</p>
+<div class="contact-wrapper">
+    <div class="contact-grid">
+        <!-- Left side: Contact info -->
+        <div class="contact-info">
+            <h2>Get in Touch</h2>
+            <div class="contact-details">
+                <p><i class="fas fa-map-marker-alt"></i> 7 Karl Marx Street, Kazan, HC 98765</p>
+                <p><i class="fas fa-phone-alt"></i> +7 9959 817 669</p>
+                <p><i class="fas fa-envelope"></i> kayulaApteka@medicarepharmacy.com</p>
+            </div>
+            <div class="contact-hours">
+                <h3><i class="far fa-clock"></i> Opening Hours</h3>
+                <ul>
+                    <li><span>Monday – Friday</span><span>8:00 AM – 8:00 PM</span></li>
+                    <li><span>Saturday</span><span>9:00 AM – 6:00 PM</span></li>
+                    <li><span>Sunday</span><span>10:00 AM – 4:00 PM</span></li>
+                    <li><span>Public Holidays</span><span>Closed</span></li>
+                </ul>
+            </div>
+            <div class="social-links">
+                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
         </div>
-        <div style="flex: 2;">
+
+        <!-- Right side: Google Map -->
+        <div class="map-container">
+            <h3><i class="fas fa-location-dot"></i> Find us here</h3>
             {% include 'pharmacy/includes/map_partial.html' %}
         </div>
     </div>
