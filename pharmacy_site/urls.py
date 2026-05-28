@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('pharmacy.urls')),
-    path('users/', include('users.urls', namespace='users')),
+    path('', include('pharmacy.urls')),               # pharmacy app (home, products, map, chat)
+    path('users/', include('users.urls', namespace='users')),   # users app (login, logout, register, profile)
 ]
 
 if settings.DEBUG:

@@ -1,18 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.cache import cache
 from django.conf import settings
 from .models import Product, Category, Tag
 from .forms import AddProductForm
-#from .services.cohere_service import CohereService
+from .services.mock_ai_service import MockAIService   # use mock AI (no API key needed)
 import json
-from .services.mock_ai_service import MockAIService
 
-# ===== Menu (fallback) =====
 menu = [
     {'title': 'Home', 'url_name': 'home'},
     {'title': 'About', 'url_name': 'about'},
@@ -21,45 +18,19 @@ menu = [
     {'title': '📍 Pharmacy Location', 'url_name': 'map'},
 ]
 
-
-# ===== Index with search, pagination, caching =====
 def index(request):
-    # Base queryset (only published products)
-    products_queryset = Product.published.all()
-
-    # Search functionality
-    search_query = request.GET.get('q', '').strip()
-    if search_query:
-        products_queryset = products_queryset.filter(
-            name__icontains=search_query
-        ) | products_queryset.filter(
-            description__icontains=search_query
-        )
-
-    # Cache the count (optional, reduces DB hits)
-    cache_key = f"product_count_{search_query}"
-    total_products = cache.get(cache_key)
-    if total_products is None:
-        total_products = products_queryset.count()
-        cache.set(cache_key, total_products, 60 * 5)  # 5 minutes
-
-    # Pagination (6 products per page)
-    paginator = Paginator(products_queryset, 6)
-    page_number = request.GET.get('page')
-    products = paginator.get_page(page_number)
-
-    context = {
+    products = Product.published.all()
+    paginator = Paginator(products, 6)
+    page = request.GET.get('page')
+    products_page = paginator.get_page(page)
+    return render(request, 'pharmacy/index.html', {
         'title': 'Pharmacy Home',
-        'products': products,
-        'search_query': search_query,
+        'products': products_page,
         'menu': menu,
-    }
-    return render(request, 'pharmacy/index.html', context)
+    })
 
-
-# ===== Other views (unchanged except minor additions) =====
 def about(request):
-    return render(request, 'pharmacy/about.html', {'title': 'About Our Pharmacy', 'menu': menu})
+    return render(request, 'pharmacy/about.html', {'title': 'About Us', 'menu': menu})
 
 def show_product(request, product_slug):
     product = get_object_or_404(Product, slug=product_slug, is_published=True)
@@ -117,8 +88,8 @@ def contact(request):
         'title': 'Contact Us',
         'menu': menu,
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
-        'map_center_lat': 55.794182340233185,
-        'map_center_lng': 49.14070131739104,
+        'map_center_lat': 55.751574,
+        'map_center_lng': 37.573856,
         'map_zoom': 16,
     }
     return render(request, 'pharmacy/contact.html', context)
@@ -128,16 +99,11 @@ def map_view(request):
         'title': 'Pharmacy Location',
         'menu': menu,
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
-        'map_center_lat': 55.794182340233185,
-        'map_center_lng': 49.14070131739104,
+        'map_center_lat': 55.751574,
+        'map_center_lng': 37.573856,
         'map_zoom': 14,
     }
-
     return render(request, 'pharmacy/map.html', context)
-
-@csrf_exempt
-@require_http_methods(["POST"])
-
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -147,20 +113,13 @@ def cohere_chat(request):
         question = data.get('question', '')
         if not question.strip():
             return JsonResponse({'answer': 'Please enter a question.'})
-        # Use mock AI instead of real API
         ai = MockAIService()
         answer = ai.ask_question(question)
         return JsonResponse({'answer': answer})
     except Exception as e:
-        print(f"Chat error: {e}")
-        return JsonResponse({'answer': 'Sorry, something went wrong. Please try again.'}, status=500)
+        return JsonResponse({'answer': 'AI service error. Try again later.'}, status=500)
 
-# Legacy views (keep as needed)
-def categories(request, cat_id):
-    return HttpResponse(f"<h1>Medication Category</h1><p>Category ID: {cat_id}</p>")
 def archive(request, year):
     if year > 2025:
         return redirect('home')
-    return HttpResponse(f"<h1>Pharmacy Archive</h1><p>Year: {year}</p>")
-def page_not_found(request, exception):
-    return HttpResponseNotFound("<h1>Page not found</h1><p>The pharmacy page you requested does not exist.</p>")
+    return HttpResponse(f"<h1>Archive</h1><p>Year: {year}</p>")
